@@ -299,7 +299,7 @@ EXPOSE 3000
 RUN mkdir $USERHOME/code-store
 VOLUME $USERHOME/code-store
 
-FROM bashrc as vimvc
+FROM bashrc as vimrc
 ARG line="set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab autoindent"
 ARG line="$line\nset number"
 ARG line="$line\nset nocompatible"
@@ -309,3 +309,13 @@ ARG line="$line\nset cursorline"
 ARG line="$line\nhi CursorLine   cterm=NONE ctermbg=237 ctermfg=NONE"
 ARG line="$line\nhi CursorLineNr   cterm=NONE ctermbg=36 ctermfg=NONE"
 RUN echo "$line" >$USERHOME/.vimrc
+
+FROM vimrc as nmap
+RUN sudo apt-get -qq install \
+nmap \
+&& sudo apt-get clean
+
+RUN echo '\n\
+nmap --top-ports 20 sbsystemsinc.com\n\
+'\
+>>$USERHOME/.bashrc
